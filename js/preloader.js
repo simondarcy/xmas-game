@@ -46,7 +46,6 @@ var Preloader = {
         game.load.image('snow','img/snow.png');
         game.load.image('santa','img/santa.png');
 
-        game.load.image('snowman','img/snowman.png');
         game.load.image("gift", "img/parcel.png");
         game.load.image('tree','img/tree.png');
         game.load.image('house','img/snow-house.png');

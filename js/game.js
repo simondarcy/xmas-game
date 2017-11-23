@@ -8,8 +8,8 @@ numSnakeSections = 5;
 
 var blah,ball,plane,moving,direction = "up",canDrop=false;
 
-var score = 0;
 
+var presentsCollected = 0;
 var giftSpeed = 280;
 var giftGap = 350;
 var houseGap = 250;
@@ -172,11 +172,7 @@ var Game = {
 
         }, this);
 
-
-
-
-
-
+        this.santaGroup = game.add.group();
 
         //  Init snakeSection array
         for (var i = 0; i <= numSnakeSections-1; i++)
@@ -184,30 +180,27 @@ var Game = {
 
             sp = 'reindeer';
             sc = settings.reindeerScale;
+            an = 0.5;
+
             if (i == 0){
                 sp = 'santa';
                 sc = settings.santaScale;
+                an = 0.6
             }
 
             snakeSection[i] = game.add.sprite(300+i*settings.reindeerSpacing, 300, sp);
             game.physics.enable(snakeSection[i], Phaser.Physics.ARCADE);
-            snakeSection[i].anchor.setTo(0.5);
-            snakeSection[i].scale.setTo(sc)
+            snakeSection[i].anchor.setTo(0.5, an);
+            snakeSection[i].scale.setTo(sc);
+
+            this.santaGroup.add(snakeSection[i]);
         }
 
 
-
         ball = snakeSection[snakeSection.length-1];
-
         ball.body.immovable = true;
 
         this.dropGiftGroup = game.add.group();
-
-
-
-        snowman = game.add.sprite(game.width+100, game.height-100, 'snowman');
-
-
 
 
         textStyle = {
@@ -217,9 +210,9 @@ var Game = {
             boundsAlignH: "center",
             boundsAlignV: "middle"
         };
-        scoreText = game.add.text(game.width - 100, 50, score, textStyle);
-        scoreText.alpha = 0;
-        scoreText.setText(score);
+        presentsText = game.add.text(game.width - 100, 50, presentsCollected, textStyle);
+        presentsText.alpha = 0;
+        presentsText.setText(presentsCollected);
 
         game.input.onDown.add(this.moveDeer, this);
 
@@ -245,9 +238,6 @@ var Game = {
 
     moveDeer: function(location){
 
-
-        //ball.body.moves = true;
-
         for (var i = snakeSection.length-1; i >= 0; i--) {
             game.physics.arcade.moveToXY(snakeSection[i], snakeSection[i].x, location, 600, 500-(i*50));
         }
@@ -255,7 +245,6 @@ var Game = {
     },
     checkDeer:function(){
         for (var i = 0; i <= numSnakeSections-1; i++) {
-
             if(direction == "down" && (snakeSection[i].y + snakeSection[i].height) >= blah || direction == "up" && snakeSection[i].y <= blah) {
                 snakeSection[i].body.velocity.setTo(0, 0);
             }
@@ -264,48 +253,43 @@ var Game = {
     update : function() {
 
 
-        game.physics.arcade.collide(ball, this.giftGroup, function(s, b){
 
+        //Santa collects presents
+        game.physics.arcade.collide(this.santaGroup, this.giftGroup, function(s, b){
+            //kill presetn
             b.body.velocity.x = 0;
             b.kill();
             b.destroy();
-            score++;
-            scoreText.setText(score);
-            scoreText.alpha = 1;
-            scoreText.x = (s.x);
-            scoreText.y = (s.y - 100);
-            scoreTween = game.add.tween(scoreText).to({alpha: 0}, 300, Phaser.Easing.Linear.None, true);
-
-
+            //update number of presents collected
+            presentsCollected++;
+            presentsText.setText(presentsCollected);
+            presentsText.alpha = 1;
+            presentsText.x = (s.x);
+            presentsText.y = (s.y - 100);
+            presentsTextTween = game.add.tween(presentsText).to({alpha: 0}, 300, Phaser.Easing.Linear.None, true);
         });
 
 
         //Hit house
         game.physics.arcade.collide(this.houseGroup, this.dropGiftGroup, function(h, g){
-
-
             var killTween = game.add.tween(g.scale);
             killTween.to({x: 0, y: 0}, 200, Phaser.Easing.Linear.None);
             killTween.onComplete.addOnce(function () {
                 g.kill();
             }, this);
             killTween.start();
-
-
-
-
         });
 
 
-
-        game.physics.arcade.collide(ball, plane, function(s, p){
+        //if santa hits place
+        game.physics.arcade.collide(this.santaGroup, plane, function(s, p){
             music.stop();
             game.state.start('GameOver');
 
         });
 
-
-        game.physics.arcade.collide(ball, this.houseGroup, function(s, h){
+        //If sanya hots house
+        game.physics.arcade.collide(this.santaGroup, this.houseGroup, function(s, h){
             music.stop();
             game.state.start('GameOver');
 
@@ -345,11 +329,11 @@ var Game = {
     },
     dropPresent:function(){
         if(canDrop) {
-            if (score<=0)return false;
+            if (presentsCollected<=0)return false;
             canDrop = false;
             this.dropGift(this.dropGiftGroup);
-            score--;
-            scoreText.setText(score);
+            presentsCollected--;
+            presentsText.setText(presentsCollected);
         }
     },
 
@@ -362,13 +346,6 @@ var Game = {
         this.mountainsBack.width = game.width;
         this.mountainsBack.height = game.height;
 
-        //this.mountainsMid1 = game.add.tileSprite(0,
-        //    game.height - game.cache.getImage('bgr-mid').height + 30,
-        //    game.width,
-        //    game.cache.getImage('bgr-mid').height,
-        //    'bgr-mid'
-        //);
-
         this.mountainsMid2 = game.add.tileSprite(0,
             game.height - game.cache.getImage('bgr-front').height+10,
             game.width,
@@ -380,8 +357,6 @@ var Game = {
     },
 
     backgroundMotion:function(){
-
-        //this.mountainsMid1.tilePosition.x -= 0.3;
         this.mountainsMid2.tilePosition.x -= 0.75;
     },
 

@@ -11,7 +11,7 @@ var Menu = {
 
     snow: function(){
         emitter = game.add.emitter(game.world.centerX, -100, 200);
-        emitter.width = w;
+        emitter.width = game.width;
         emitter.makeParticles('snow');
         emitter.minParticleSpeed.set(0, 300);
         emitter.maxParticleSpeed.set(0, 400);
@@ -47,10 +47,6 @@ var Menu = {
             playBtnTween = game.add.tween(playBtn).to( { alpha: 1 }, 800, Phaser.Easing.Linear.None, true, 0, 800, true);
 
 
-            textStyle = { font: settings.instructionDescFont , fill: '#ffffff', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
-            instructionDesc = game.add.text(game.world.centerX, playBtn.centerY+55, "Use arrow keys to move up and down and space to drop presents", textStyle);
-            instructionDesc.anchor.set(0.5);
-
 
         }, this);
         splashHeadingTween.start();
@@ -78,7 +74,7 @@ var Menu = {
 
         //tap anywhere
         game.input.onTap.add(function () {
-            game.state.start('Game');
+            game.state.start('Instructions');
         }, this);
 
 

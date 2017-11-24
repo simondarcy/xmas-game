@@ -114,8 +114,9 @@ var Game = {
         game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
         music = game.add.audio('music');
-
         music.play();
+
+        hohoho = game.add.audio('hohoho');
 
         this.giftGroup = game.add.group();
         this.addGift(this.giftGroup);
@@ -153,6 +154,10 @@ var Game = {
             snakeSection[i].body.collideWorldBounds = true;
             snakeSection[i].anchor.setTo(0.5, an);
             snakeSection[i].scale.setTo(sc);
+            if (sp=="santa"){
+                snakeSection[i].width = 130;
+                snakeSection[i].height = 100
+            }
             this.santaGroup.add(snakeSection[i]);
         }
 
@@ -263,7 +268,8 @@ var Game = {
                 score--
             }
             else{
-                score++
+                score++;
+                hohoho.play();
             }
             scoreText.setText(score);
 

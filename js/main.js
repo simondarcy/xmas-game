@@ -1,12 +1,12 @@
 
 //work out a percentage
 Percent = function(num, dir){
-    wh = (dir == "h")?h:w;
+    wh = (dir == "h")?game.height:game.width;
     p = (num / 100) * wh;
     return p;
 };
 
-var game;
+var game, w, h;
 
 
 function _isMobile(){
@@ -20,8 +20,26 @@ function _isMobile(){
 
 
 function init() {
+
+
+    var w = Math.max (document.documentElement.clientWidth, window.innerWidth || 0);
+    var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+    if (w > 1160){
+        //Switch to desktop settings
+        settings = desktopSettings;
+    }
+    //max width height
+    if(w>1160){
+        w = 1160;
+        h = 650;
+    }
+
+
+
     game = new Phaser.Game(w, h, Phaser.AUTO, 'game');
     game.state.add('Preloader', Preloader);
+    game.state.add('Instructions', Instructions);
     game.state.add('Menu', Menu);
     game.state.add('Game', Game);
     game.state.add('GameOver', GameOver);
@@ -65,6 +83,8 @@ function doOnOrientationChange()
 
 window.onload = function()
 {
+
+
     if (_isMobile()) {
 
         doOnOrientationChange();

@@ -20,8 +20,8 @@ var Preloader = {
 
 
         game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
-        loadingText = game.add.text(32, 100, 'Loading...', { font:"23px Mountains of Christmas", fill: '#FFF'});
-
+        loadingText = game.add.text(game.width/2, game.height/2, 'Loading...', { font:"23px Mountains of Christmas", fill: '#FFF'});
+        loadingText.anchor.setTo(0.5)
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.scale.pageAlignHorizontally = true;
         game.scale.pageAlignVertically = true;
@@ -65,7 +65,8 @@ var Preloader = {
         game.load.image('buttonA', 'img/icons/buttonA.png');
         game.load.image('buttonReturn', 'img/icons/return.png');
 
-        game.load.audio('music', ['audio/santa.mp3']);
+        game.load.audio('music', ['audio/santa.wav']);
+        game.load.audio('hohoho', ['audio/hohoho.wav']);
 
         //Share icons
         game.load.image('facebook', 'img/share_facebook.png');

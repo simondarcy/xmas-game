@@ -9,22 +9,23 @@ var GameOver = {
 
         Menu.createBackground();
 
+        textStyle = { font: settings.splashHeadingFont , fill: '#ffffff', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
+        instructionHeadin = game.add.text(game.width/2, game.height/10, "Game Over", textStyle);
+        instructionHeadin.anchor.set(0.5);
+
         textStyle = {
-            font: settings.finalScoreTextFont,
-            fill: '#FFFFFF',
-            align: 'center',
-            boundsAlignH: "center",
-            boundsAlignV: "middle"
+            font: settings.finalScoreTextFont, fill: '#FFFFFF', align:'center', boundsAlignH: "center",  boundsAlignV: "middle"
         };
-        scoredescText = game.add.text(game.world.centerX, 40, "Final Score ", textStyle);
+
+        scoredescText = game.add.text(game.width/2, instructionHeadin.y+80, "Final Score ", textStyle);
         scoredescText.anchor.set(0.5);
         textStyle['fill'] = "#FF0000";
-        scoreText = game.add.text( (scoredescText.left + scoredescText.width), 40, score, textStyle);
+        scoreText = game.add.text( (scoredescText.left + scoredescText.width) + 15, scoredescText.y, score, textStyle);
         scoreText.anchor.set(0.5);
 
         //Add tap to replay
         instructionHeadingTextStyle = { font: settings.instructionFont , fill: '#ffe600', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
-        instructionHeading = game.add.text(game.world.centerX, game.world.centerY+100, "Tap to Play Again", instructionHeadingTextStyle);
+        instructionHeading = game.add.text((game.width/2), game.world.centerY+100, "Tap to Play Again", instructionHeadingTextStyle);
         instructionHeading.anchor.set(0.5);
         instructionHeading.alpha = 0;
         instructionHeadingTween = game.add.tween(instructionHeading).to( { alpha: 1 }, 800, Phaser.Easing.Linear.None, true, 0, 800, true);
@@ -35,25 +36,26 @@ var GameOver = {
         }, this);
 
 
-        //Share panel stuff ( this became a bit tricky )
-        //Build and display logo at bottom of screen
+
+
+
+
+
+
+        //Share panel box
         var shareIcons = game.add.group();
 
-        var logo = game.add.sprite(game.world.centerX, game.stage.height-20, 'rtelogo');
-        logo.anchor.setTo(0.5);
-        logo.scale.set(0.4, 0.4);
-
-        var facebook = game.add.button(game.world.centerX - 100, game.stage.height-95, 'facebook');
+        var facebook = game.add.button((game.width/2) - 100, game.stage.height-95, 'facebook');
         facebook.anchor.setTo(0.5);
 
-        var twitter = game.add.button(game.world.centerX, game.stage.height-95, 'twitter');
+        var twitter = game.add.button((game.width/2), game.stage.height-95, 'twitter');
         twitter.anchor.setTo(0.5);
         var link;
         if(_isMobile()) {
-            link = game.add.button(game.world.centerX + 100, game.stage.height - 95, 'whatsapp');
+            link = game.add.button((game.width/2) + 100, game.stage.height - 95, 'whatsapp');
         }
         else{
-            link = game.add.button(game.world.centerX + 100, game.stage.height - 95, 'link');
+            link = game.add.button((game.width/2) + 100, game.stage.height - 95, 'link');
         }
         link.anchor.setTo(0.5);
 
@@ -63,13 +65,13 @@ var GameOver = {
 
         }, this);
         twitter.onInputUp.add(function(){
-            shareText = "I scored " + score + " headers for @FAIreland playing 'Long Shots' with @shanelong7 Play Now!";
-            url = "//twitter.com/share?url=https://www.rte.ie/long-shots/&text="+shareText+"&via=rtesport&hashtags=rtesoccer";
+            shareText = "I delivered " + score + " presents with @ryantubridyshow playing 'Tubs Toy Show Trek' @RTELateLateShow Play Now!";
+            url = "//twitter.com/share?url=https://www.rte.ie/long-shots/&text="+shareText+"&via=RTELateLateShow&hashtags=LateLateToyShow";
             window.open(url, "_blank")
         }, this);
 
         link.onInputUp.add(function(){
-            shareText = "I scored " + score + " headers playing Long Shots!. Play here: https://www.rte.ie/long-shots/";
+            shareText = "Me and Tubs delivered " + score + " presents playing 'Tubs Toy Show Trek'!. Play here: https://www.rte.ie/X/";
 
             //If mobile open in whatsapp
             if(settings.isMobile){
@@ -107,7 +109,7 @@ var GameOver = {
                 boundsAlignH: "center",
                 boundsAlignV: "middle"
             };
-            shareHeading = game.add.text(game.world.centerX, game.world.centerY + settings.shareHeadingTop, "Share", shareHeadingTextStyle);
+            shareHeading = game.add.text(game.width/2, game.world.centerY + settings.shareHeadingTop, "Share", shareHeadingTextStyle);
             shareHeading.anchor.set(0.5);
         }
 
@@ -119,10 +121,10 @@ var GameOver = {
         if (typeof(Storage) !== "undefined") {
             top_score = localStorage.getItem("lsscore");
             textStyle['fill'] = "#FFFFFF";
-            bestScoredescText = game.add.text(game.world.centerX-15, scoreText.y + 40, "Best Score ", textStyle);
+            bestScoredescText = game.add.text(game.width/2, scoreText.y + 60, "Best Score ", textStyle);
             bestScoredescText.anchor.set(0.5);
             textStyle['fill'] = "#FF0000";
-            bestScoreText = game.add.text((bestScoredescText.left + bestScoredescText.width)+15, scoredescText.y + 40, top_score, textStyle);
+            bestScoreText = game.add.text((bestScoredescText.left + bestScoredescText.width)+15, bestScoredescText.y, top_score, textStyle);
             bestScoreText.anchor.set(0.5);
         }
 

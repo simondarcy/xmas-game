@@ -7,7 +7,10 @@ var mobileSettings = {
     giftScale:0.7,
     splashHeadingFont:'42px Mountains of Christmas',
     playBtnFont:'30px Helvetica',
-    instructionDescFont:'23px Arial'
+    instructionDescFont:'23px Arial',
+    shareHeadingTop: 170,
+    scoreTextFont:'60px Fredoka One',
+    finalScoreTextFont:'35px Fredoka One'
 };
 
 var desktopSettings = {
@@ -19,7 +22,10 @@ var desktopSettings = {
     giftScale:0.8,
     splashHeadingFont:'42px Mountains of Christmas',
     playBtnFont:'30px Helvetica',
-    instructionDescFont:'23px Arial'
+    instructionDescFont:'23px Arial',
+    shareHeadingTop: 170,
+    scoreTextFont:'60px Fredoka One',
+    finalScoreTextFont:'35px Fredoka One'
 };
 
 var settings = mobileSettings;

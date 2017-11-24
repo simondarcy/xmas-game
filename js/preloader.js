@@ -48,10 +48,10 @@ var Preloader = {
 
         game.load.image("gift", "img/parcel.png");
         game.load.image('tree','img/tree.png');
-        game.load.image('house','img/snow-house.png');
         game.load.image('replay', 'img/icons/return.png');
 
         game.load.spritesheet('plane', 'img/plane-sprite.png', 443, 282, 2);
+        game.load.spritesheet('house', 'img/snow-house-sprite.png', 239, 99, 2);
 
         //backroudn parallax
         game.load.image('bgr-back', 'img/bgr-back-2.png');
@@ -66,6 +66,12 @@ var Preloader = {
         game.load.image('buttonReturn', 'img/icons/return.png');
 
         game.load.audio('music', ['audio/santa.mp3']);
+
+        //Share icons
+        game.load.image('facebook', 'img/share_facebook.png');
+        game.load.image('twitter', 'img/share_twitter.png');
+        game.load.image('link', 'img/share_link.png');
+        game.load.image('whatsapp', 'img/share_whatsapp.png');
 
 
 

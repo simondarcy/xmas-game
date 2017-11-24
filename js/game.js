@@ -8,12 +8,12 @@ numSnakeSections = 5;
 
 var blah,ball,plane,moving,direction = "up",canDrop=false;
 
-
-var presentsCollected = 0;
+var presentsCollected ;
 var giftSpeed = 280;
 var giftGap = 350;
 var houseGap = 250;
 var tunnelWidth = 100;
+var score;
 
 //GIFT
 Gift = function (game) {
@@ -27,10 +27,8 @@ Gift = function (game) {
     this.body.angularVelocity = -30;
     this.placeGift = true;
 };
-
 Gift.prototype = Object.create(Phaser.Sprite.prototype);
 Gift.prototype.constructor = Gift;
-
 Gift.prototype.update = function(){
 
     if(this.placeGift && this.x < game.width - giftGap){
@@ -43,9 +41,8 @@ Gift.prototype.update = function(){
 };
 
 
-//Drop Gift
+//Functions to drop the Gift
 DropGift = function (game) {
-
     Phaser.Sprite.call(this, game, snakeSection[0].x, snakeSection[0].y, "gift");
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.anchor.set(0.5);
@@ -53,12 +50,9 @@ DropGift = function (game) {
     this.angle += game.rnd.between(45, 360);
     this.body.velocity.y = +giftSpeed;
     this.body.angularVelocity = -200;
-
 };
-
 DropGift.prototype = Object.create(Phaser.Sprite.prototype);
 DropGift.prototype.constructor = DropGift;
-
 DropGift.prototype.update = function(){
 
     if(this.placeGift && this.x < game.width - giftGap){
@@ -74,22 +68,22 @@ DropGift.prototype.update = function(){
 
 //Create Houses
 House = function (game) {
-
-    Phaser.Sprite.call(this, game, game.width+800, (game.height-game.cache.getImage('house').height+50), "house");
+    Phaser.Sprite.call(this, game, game.width+150, (game.height-game.cache.getImage('house').height+50), "house");
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.anchor.set(0.5);
     this.scale.setTo(settings.houseScale);
     this.body.velocity.x = -giftSpeed;
     this.body.immovable = true;
     this.placeHouse = true;
-    this.gap =  game.rnd.between(100, 400)
+    this.houseType = game.rnd.between(0, 1);
+    var anim = this.animations.add('gb');
+    anim.frame = this.houseType;
+    this.gap =  game.rnd.between(150, 300)
 
 };
 House.prototype = Object.create(Phaser.Sprite.prototype);
 House.prototype.constructor = House;
-
 House.prototype.update = function(){
-
     if(this.placeHouse && this.x < game.width - this.gap){
         this.placeHouse = false;
         Game.addHouse(this.parent);
@@ -101,9 +95,6 @@ House.prototype.update = function(){
 };
 
 var Game = {
-
-
-
     preload: function() {
 
     },
@@ -129,29 +120,75 @@ var Game = {
         this.giftGroup = game.add.group();
         this.addGift(this.giftGroup);
 
-
         this.houseGroup = game.add.group();
         this.addHouse(this.houseGroup);
 
-
         //Plane
-        plane = game.add.sprite(game.width+game.rnd.between(100, 200), game.rnd.between(10, game.height / 5), "plane");
+        plane = game.add.sprite(game.width+game.rnd.between(100, 200), game.rnd.between(10, game.world.centerY), "plane");
         game.physics.enable(plane, Phaser.Physics.ARCADE);
         plane.scale.setTo(settings.planeScale);
         plane.body.velocity.x -= 140;
         var fly = plane.animations.add('fly');
         plane.animations.play('fly', 2, true);
 
+        if (_isMobile()){
+            this.mobileButtons();
+        }
+
+        this.santaGroup = game.add.group();
+
+        //  Init snakeSection array
+        for (var i = 0; i <= numSnakeSections-1; i++)
+        {
+            sp = 'reindeer';
+            sc = settings.reindeerScale;
+            an = 0.5;
+            if (i == 0){
+                sp = 'santa';
+                sc = settings.santaScale;
+                an = 0.6
+            }
+            snakeSection[i] = game.add.sprite(300+i*settings.reindeerSpacing, 300, sp);
+            game.physics.enable(snakeSection[i], Phaser.Physics.ARCADE);
+            snakeSection[i].body.collideWorldBounds = true;
+            snakeSection[i].anchor.setTo(0.5, an);
+            snakeSection[i].scale.setTo(sc);
+            this.santaGroup.add(snakeSection[i]);
+        }
 
 
+        ball = snakeSection[snakeSection.length-1];
+        ball.body.immovable = true;
+
+        this.dropGiftGroup = game.add.group();
+
+        textStyle = {
+            font: '42px Arial',
+            fill: '#ffffff',
+            align: 'center',
+            boundsAlignH: "center",
+            boundsAlignV: "middle"
+        };
+        presentsCollected = 0;
+        presentsText = game.add.text(game.width - 100, 50, presentsCollected, textStyle);
+        presentsText.alpha = 0;
+        presentsText.setText(presentsCollected);
+        //Actual score box
+        score = 0;
+        scoreText = game.add.text(game.width - 100, 50, score, textStyle);
+        scoreText.setText(score);
+
+        game.input.onDown.add(this.moveDeer, this);
+
+    },
+
+
+    mobileButtons:function(){
         var spaceArrow = game.add.button(100, game.world.centerY, 'buttonA');
         spaceArrow.anchor.setTo(0.5);
         spaceArrow.onInputUp.add(function(){
             this.dropPresent();
         }, this);
-
-
-
 
         var upArrow = game.add.button(100, spaceArrow.y - 100, 'arrowUp');
         upArrow.anchor.setTo(0.5);
@@ -162,64 +199,14 @@ var Game = {
             this.moveDeer(blah);
         }, this);
 
-
         var downArrow = game.add.button(100, (spaceArrow.y+spaceArrow.height), 'arrowDwn');
         downArrow.anchor.setTo(0.5);
         downArrow.onInputDown.add(function(){
             blah = (ball.y + ball.height) + ball.height;
             direction = "down";
             this.moveDeer(blah);
-
         }, this);
-
-        this.santaGroup = game.add.group();
-
-        //  Init snakeSection array
-        for (var i = 0; i <= numSnakeSections-1; i++)
-        {
-
-            sp = 'reindeer';
-            sc = settings.reindeerScale;
-            an = 0.5;
-
-            if (i == 0){
-                sp = 'santa';
-                sc = settings.santaScale;
-                an = 0.6
-            }
-
-            snakeSection[i] = game.add.sprite(300+i*settings.reindeerSpacing, 300, sp);
-            game.physics.enable(snakeSection[i], Phaser.Physics.ARCADE);
-            snakeSection[i].anchor.setTo(0.5, an);
-            snakeSection[i].scale.setTo(sc);
-
-            this.santaGroup.add(snakeSection[i]);
-        }
-
-
-        ball = snakeSection[snakeSection.length-1];
-        ball.body.immovable = true;
-
-        this.dropGiftGroup = game.add.group();
-
-
-        textStyle = {
-            font: '42px Arial',
-            fill: '#ffffff',
-            align: 'center',
-            boundsAlignH: "center",
-            boundsAlignV: "middle"
-        };
-        presentsText = game.add.text(game.width - 100, 50, presentsCollected, textStyle);
-        presentsText.alpha = 0;
-        presentsText.setText(presentsCollected);
-
-        game.input.onDown.add(this.moveDeer, this);
-
-
-
     },
-
     addHouse: function(group){
         var house = new House(game);
         game.add.existing(house);
@@ -251,9 +238,6 @@ var Game = {
         }
     },
     update : function() {
-
-
-
         //Santa collects presents
         game.physics.arcade.collide(this.santaGroup, this.giftGroup, function(s, b){
             //kill presetn
@@ -270,18 +254,31 @@ var Game = {
         });
 
 
-        //Hit house
+        //Present collides with house
         game.physics.arcade.collide(this.houseGroup, this.dropGiftGroup, function(h, g){
+
+            //!todo is this a good house?
+
+            if (h.houseType == 0){
+                score--
+            }
+            else{
+                score++
+            }
+            scoreText.setText(score);
+
             var killTween = game.add.tween(g.scale);
             killTween.to({x: 0, y: 0}, 200, Phaser.Easing.Linear.None);
             killTween.onComplete.addOnce(function () {
                 g.kill();
             }, this);
             killTween.start();
+
+
         });
 
 
-        //if santa hits place
+        //if santa hits plane
         game.physics.arcade.collide(this.santaGroup, plane, function(s, p){
             music.stop();
             game.state.start('GameOver');
@@ -292,7 +289,6 @@ var Game = {
         game.physics.arcade.collide(this.santaGroup, this.houseGroup, function(s, h){
             music.stop();
             game.state.start('GameOver');
-
         });
 
         this.backgroundMotion();
@@ -311,7 +307,6 @@ var Game = {
             this.moveDeer(blah);
         }
         if (this.spaceKey.isDown){
-            console.log("space down");
             this.dropPresent();
         }
         else if (this.spaceKey.isUp){
@@ -339,13 +334,7 @@ var Game = {
 
     createBackground:function(){
 
-        game.stage.backgroundColor = "#000000";
-
-        offset = 100;
-        this.mountainsBack = game.add.sprite(0, 0-offset, 'bgr-back');
-        this.mountainsBack.width = game.width;
-        this.mountainsBack.height = game.height;
-
+        Menu.createBackground();
         this.mountainsMid2 = game.add.tileSprite(0,
             game.height - game.cache.getImage('bgr-front').height+10,
             game.width,

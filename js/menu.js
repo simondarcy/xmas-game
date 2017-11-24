@@ -20,23 +20,17 @@ var Menu = {
         emitter.setScale(0.5, 0.5, 1, 1);
         emitter.start(false, 5000, 100);
     },
-
-    create: function () {
-
-
-
+    createBackground:function(){
         game.stage.backgroundColor = "#000000";
-
         offset = 100;
         this.mountainsBack = game.add.sprite(0, 0, 'bgr-back');
         this.mountainsBack.width = game.width;
         this.mountainsBack.height = game.height;
+    },
+    create: function () {
 
-
+        this.createBackground();
         this.snow();
-
-
-
         //add Splash screen heading
         textStyle = { font: settings.splashHeadingFont , fill: '#ffffff', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
         splashHeading = game.add.text(game.world.centerX, game.world.centerY-85, "An Xmas Game", textStyle);

@@ -6,13 +6,10 @@
 var Instructions = {
 
     preload: function () {
-
     },
     create: function(){
 
-
         Menu.createBackground();
-
 
         textStyle = { font: settings.splashHeadingFont , fill: '#ffffff', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
         instructionHeadin = game.add.text(game.world.centerX, game.height/10, "How to Play", textStyle);

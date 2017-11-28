@@ -4,9 +4,6 @@ var loadingText;
 WebFontConfig = {
     active: function() {
         game.time.events.add(Phaser.Timer.SECOND, function() {
-
-
-
         }, this);
     },
     google: {
@@ -18,16 +15,18 @@ var Preloader = {
 
     preload : function() {
 
-
-        game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
-        loadingText = game.add.text(game.width/2, game.height/2, 'Loading...', { font:"23px Mountains of Christmas", fill: '#FFF'});
-        loadingText.anchor.setTo(0.5)
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.scale.pageAlignHorizontally = true;
         game.scale.pageAlignVertically = true;
-
         game.scale.refresh();
 
+        //Load fonts
+        game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+        //Loading text
+        loadingText = game.add.text(game.width/2, game.height/2, 'Loading...', { font:"23px Mountains of Christmas", fill: '#FFF'});
+        loadingText.anchor.setTo(0.5);
+
+        //Load functions
         game.load.onLoadStart.add(this.loadStart, this);
         game.load.onFileComplete.add(this.fileComplete, this);
         game.load.onLoadComplete.add(this.loadComplete, this);
@@ -41,39 +40,29 @@ var Preloader = {
 
         game.load.start();
 
-        game.load.image('ball','img/ball.png');
-        game.load.image('reindeer','img/rd.png');
+        //Characters
         game.load.image('snow','img/snow.png');
         game.load.image('santa','img/santa.png');
-
+        game.load.image('reindeer','img/rd.png');
         game.load.image("gift", "img/parcel.png");
-        game.load.image('tree','img/tree.png');
-        game.load.image('replay', 'img/icons/return.png');
-
-        game.load.spritesheet('plane', 'img/plane-sprite.png', 443, 282, 2);
         game.load.spritesheet('house', 'img/snow-house-sprite.png', 239, 99, 2);
-
-        //backroudn parallax
+        //Background parallax
         game.load.image('bgr-back', 'img/bgr-back-2.png');
-        game.load.image('bgr-mid', 'img/bgr-mid-2.png');
         game.load.image('bgr-front', 'img/bgr-front-2.2.png');
-        game.load.image('ground', 'img/ground.png');
-
-        //icons
+        //Buttons
         game.load.image('arrowDwn', 'img/icons/arrowDown.png');
         game.load.image('arrowUp', 'img/icons/arrowUp.png');
         game.load.image('buttonA', 'img/icons/buttonA.png');
         game.load.image('buttonReturn', 'img/icons/return.png');
-
-        game.load.audio('music', ['audio/santa.wav']);
-        game.load.audio('hohoho', ['audio/hohoho.wav']);
-
+        game.load.image('replay', 'img/icons/return.png');
         //Share icons
         game.load.image('facebook', 'img/share_facebook.png');
         game.load.image('twitter', 'img/share_twitter.png');
         game.load.image('link', 'img/share_link.png');
         game.load.image('whatsapp', 'img/share_whatsapp.png');
-
+        //Audio Files
+        game.load.audio('music', ['audio/santa.wav']);
+        game.load.audio('hohoho', ['audio/hohoho.wav']);
 
 
     },

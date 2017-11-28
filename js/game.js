@@ -6,14 +6,15 @@ snakeSection = [];
 
 numSnakeSections = 5;
 
-var blah,ball,plane,moving,direction = "up",canDrop=false;
+var blah,ball,moving,direction = "up",canDrop=false;
 
-var presentsCollected ;
+var presentsCollected;
 var giftSpeed = 280;
 var giftGap = 350;
 var houseGap = 250;
 var tunnelWidth = 100;
 var score;
+var timeLeft = 60;
 
 //GIFT
 Gift = function (game) {
@@ -96,7 +97,9 @@ House.prototype.update = function(){
 
 var Game = {
     preload: function() {
-
+        timeLeft = 60;
+        presentsCollected = 0;
+        score = 0;
     },
 
     create : function() {
@@ -110,7 +113,6 @@ var Game = {
 
         cursors = game.input.keyboard.createCursorKeys();
         this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
         game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
         music = game.add.audio('music');
@@ -123,14 +125,6 @@ var Game = {
 
         this.houseGroup = game.add.group();
         this.addHouse(this.houseGroup);
-
-        //Plane
-        plane = game.add.sprite(game.width+game.rnd.between(100, 200), game.rnd.between(10, game.world.centerY), "plane");
-        game.physics.enable(plane, Phaser.Physics.ARCADE);
-        plane.scale.setTo(settings.planeScale);
-        plane.body.velocity.x -= 140;
-        var fly = plane.animations.add('fly');
-        plane.animations.play('fly', 2, true);
 
         if (_isMobile()){
             this.mobileButtons();
@@ -174,16 +168,31 @@ var Game = {
             boundsAlignH: "center",
             boundsAlignV: "middle"
         };
-        presentsCollected = 0;
+
         presentsText = game.add.text(game.width - 100, 50, presentsCollected, textStyle);
         presentsText.alpha = 0;
         presentsText.setText(presentsCollected);
         //Actual score box
-        score = 0;
         scoreText = game.add.text(game.width - 100, 50, score, textStyle);
         scoreText.setText(score);
 
         game.input.onDown.add(this.moveDeer, this);
+
+
+
+
+
+        //add time test
+        timertextStyle = {
+            font: '',
+            fill: '#FFFFFF',
+            align: 'center',
+            boundsAlignH: "center",
+            boundsAlignV: "middle"
+        };
+
+        timeText = game.add.text(20, 25, timeLeft, timertextStyle);
+        game.time.events.loop(Phaser.Timer.SECOND, this.decreaseTime, this);
 
     },
 
@@ -284,12 +293,7 @@ var Game = {
         });
 
 
-        //if santa hits plane
-        game.physics.arcade.collide(this.santaGroup, plane, function(s, p){
-            music.stop();
-            game.state.start('GameOver');
 
-        });
 
         //If sanya hots house
         game.physics.arcade.collide(this.santaGroup, this.houseGroup, function(s, h){
@@ -319,11 +323,6 @@ var Game = {
             canDrop = true;
         }
 
-
-        if(plane.x + plane.width < 0){
-            plane.x = game.width + game.rnd.between(100, 200);
-        }
-        
         this.checkDeer();
 
 
@@ -337,7 +336,13 @@ var Game = {
             presentsText.setText(presentsCollected);
         }
     },
-
+    decreaseTime: function(){
+        timeLeft --;
+        timeText.text = timeLeft;
+        if(timeLeft == 0){
+            game.state.start('GameOver');
+        }
+    },
     createBackground:function(){
 
         Menu.createBackground();

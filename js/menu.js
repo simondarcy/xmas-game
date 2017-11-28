@@ -51,27 +51,6 @@ var Menu = {
         }, this);
         splashHeadingTween.start();
 
-
-
-        //  Init snakeSection array
-        for (var i = 0; i <= numSnakeSections-1; i++)
-        {
-
-            sp = 'reindeer';
-            sc = settings.reindeerScale;
-            if (i == 0){
-                sp = 'santa';
-                sc = settings.santaScale;
-            }
-
-            snakeSection[i] = game.add.sprite(Percent(42, 'w')+i*settings.reindeerSpacing, Percent(80, 'h'), sp);
-            snakeSection[i].anchor.setTo(0.5);
-            snakeSection[i].scale.setTo(sc)
-        }
-
-
-
-
         //tap anywhere
         game.input.onTap.add(function () {
             game.state.start('Instructions');

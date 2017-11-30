@@ -48,9 +48,9 @@ Gift.prototype.update = function(){
 House = function (game) {
     houseType = game.rnd.between(0, 1);
     houseSprite = (houseType==0)?'houseNaughty':'houseNice';
-    Phaser.Sprite.call(this, game, game.width+150, (game.height-game.cache.getImage(houseSprite).height+95), houseSprite);
+    Phaser.Sprite.call(this, game, game.width+150, (game.height-game.cache.getImage(houseSprite).height+6), houseSprite);
     game.physics.enable(this, Phaser.Physics.ARCADE);
-    this.anchor.set(0.5);
+    this.anchor.set(0.5, 0);
     this.scale.setTo(settings.houseScale);
     this.body.velocity.x = -giftSpeed;
     this.body.immovable = true;
@@ -312,8 +312,6 @@ var Game = {
                 g.kill();
             }, this);
             killTween.start();
-
-
         });
 
 

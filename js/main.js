@@ -56,7 +56,6 @@ function doOnOrientationChange()
         case 0:
         case 180:
             //Portrait mode: show the illustration
-            console.log("please filip");
             if (!flipped) {
                 document.getElementById("flip").style.display = "block";
             }

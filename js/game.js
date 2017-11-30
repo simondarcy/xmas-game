@@ -6,12 +6,11 @@ snakeSection = [];
 
 numSnakeSections = 5;
 
-var blah,ball,dropGift,moving,direction = "up",canDrop=false;
+var blah,ball,dropGift,moving,direction = "up",canDrop=false,crash=false;
 
 var presentsCollected;
 var giftSpeed = 280;
 var giftGap = 350;
-var houseGap = 250;
 var tunnelWidth = 100;
 var score;
 var timeLeft = 60;
@@ -48,7 +47,7 @@ Gift.prototype.update = function(){
 House = function (game) {
     houseType = game.rnd.between(0, 1);
     houseSprite = (houseType==0)?'houseNaughty':'houseNice';
-    Phaser.Sprite.call(this, game, game.width+150, (game.height-game.cache.getImage(houseSprite).height+6), houseSprite);
+    Phaser.Sprite.call(this, game, game.width+150, (game.height-game.cache.getImage(houseSprite).height+settings.houseOffset), houseSprite);
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.anchor.set(0.5, 0);
     this.scale.setTo(settings.houseScale);
@@ -58,7 +57,7 @@ House = function (game) {
     this.houseType = houseType;
     var anim = this.animations.add('anim');
     this.animations.play('anim', 2, true);
-    this.gap =  game.rnd.between(150, 200)
+    this.gap = game.rnd.between(150, 200)
 
 };
 House.prototype = Object.create(Phaser.Sprite.prototype);
@@ -79,6 +78,7 @@ var Game = {
         timeLeft = 60;
         presentsCollected = 0;
         score = 0;
+        crash=false;
     },
 
     create : function() {
@@ -215,13 +215,13 @@ var Game = {
 
 
     mobileButtons:function(){
-        var spaceArrow = game.add.button(100, game.world.centerY, 'buttonA');
+        var spaceArrow = game.add.button(100, game.world.centerY-30, 'buttonA');
         spaceArrow.anchor.setTo(0.5);
         spaceArrow.onInputUp.add(function(){
             this.dropPresent();
         }, this);
 
-        var upArrow = game.add.button(100, spaceArrow.y - 100, 'arrowUp');
+        var upArrow = game.add.button(100, spaceArrow.y - 80, 'arrowUp');
         upArrow.anchor.setTo(0.5);
 
         upArrow.onInputDown.add(function(){
@@ -230,8 +230,9 @@ var Game = {
             this.moveDeer(blah);
         }, this);
 
-        var downArrow = game.add.button(100, (spaceArrow.y+spaceArrow.height), 'arrowDwn');
+        var downArrow = game.add.button(100, (spaceArrow.y+spaceArrow.height)+18, 'arrowDwn');
         downArrow.anchor.setTo(0.5);
+        downArrow.angle += 180;
         downArrow.onInputDown.add(function(){
             blah = (ball.y + ball.height) + ball.height;
             direction = "down";
@@ -332,8 +333,9 @@ var Game = {
 
 
         if(ball.y + ball.height > game.height-10) {
-                music.stop();
-                game.state.start('GameOver');
+            music.stop();
+            game.state.start('GameOver');
+            crash=true;
         }
 
         this.backgroundMotion();

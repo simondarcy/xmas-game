@@ -14,11 +14,13 @@ var GameOver = {
         logo.scale.set(0.8);
 
 
-        gameLogo = game.add.sprite(game.width-Percent(5, w), Percent(4, h), 'gameLogo');
-        gameLogo.anchor.setTo(1, 0);
+
 
         presents = game.add.sprite(0, game.height - game.cache.getImage('presents').height, 'presents');
         presents.width = game.width;
+
+        gameLogo = game.add.sprite(game.width-Percent(5, w), Percent(4, h), 'gameLogo');
+        gameLogo.anchor.setTo(1, 0);
 
         textStyle = {
             font: settings.finalScoreTextFont, fill: '#FFFFFF', align:'center', boundsAlignH: "center",  boundsAlignV: "middle"
@@ -32,8 +34,9 @@ var GameOver = {
 
 
 
-        tubs = game.add.sprite(game.width/3.4, game.height-game.cache.getImage('endTubs').height+Percent(20, 'h'), 'endTubs');
+        tubs = game.add.sprite(game.width/3.4, game.height-game.cache.getImage('endTubs').height+Percent(settings.endTubsPc, 'h'), 'endTubs');
         tubs.anchor.setTo(0.5, 0);
+        tubs.scale.setTo(settings.endTubsScale);
 
         var tubAnim = tubs.animations.add('tubAnim');
         tubs.animations.play('tubAnim', 2, true);
@@ -47,7 +50,19 @@ var GameOver = {
 
         emitter.start(false, 5000, 20);
 
-        promo = game.add.audio('promo').play();
+
+        delay = 1;
+        if(crash){
+            delay=2;
+            game.add.audio('nextTime').play();
+        }
+        game.time.events.add(Phaser.Timer.SECOND*delay, function() {
+            promo = game.add.audio('promo').play();
+        }, this);
+
+
+
+
 
 
         //Add tap to replay
@@ -70,17 +85,17 @@ var GameOver = {
 
         shareIconsX = game.width-Percent(20, 'w');
 
-        var facebook = game.add.button(shareIconsX - 100, game.height-95, 'facebook');
+        var facebook = game.add.button(shareIconsX - 100, game.height-settings.shareY, 'facebook');
         facebook.anchor.setTo(0.5);
 
-        var twitter = game.add.button(shareIconsX, game.height-95, 'twitter');
+        var twitter = game.add.button(shareIconsX, game.height-settings.shareY, 'twitter');
         twitter.anchor.setTo(0.5);
         var link;
         if(_isMobile()) {
-            link = game.add.button(shareIconsX + 100, game.height - 95, 'whatsapp');
+            link = game.add.button(shareIconsX + 100, game.height - settings.shareY, 'whatsapp');
         }
         else{
-            link = game.add.button(shareIconsX + 100, game.height - 95, 'link');
+            link = game.add.button(shareIconsX + 100, game.height - settings.shareY, 'link');
         }
         link.anchor.setTo(0.5);
 
@@ -90,13 +105,13 @@ var GameOver = {
 
         }, this);
         twitter.onInputUp.add(function(){
-            shareText = "I delivered " + score + " presents with @ryantubridyshow playing 'Tubs Toy Show Trek' @RTELateLateShow Play Now!";
-            url = "//twitter.com/share?url=https://www.rte.ie/long-shots/&text="+shareText+"&via=RTELateLateShow&hashtags=LateLateToyShow";
+            shareText = "@ryantubridyshow and I just delivered " + score + " gifts playing Tubridy's Toys @RTELateLateShow Play Now! #LLTS";
+            url = "//twitter.com/share?url=https://www.rte.ie/long-shots/&text="+shareText+"&via=RTELateLateShow&hashtags=LLTS";
             window.open(url, "_blank")
         }, this);
 
         link.onInputUp.add(function(){
-            shareText = "Me and Tubs delivered " + score + " presents playing 'Tubs Toy Show Trek'!. Play here: https://www.rte.ie/X/";
+            shareText = "Tubs and I delivered " + score + " gifts playing Tubridy's Toys!. Have a go yourself here: https://www.rte.ie/X/";
 
             //If mobile open in whatsapp
             if(settings.isMobile){
@@ -124,11 +139,6 @@ var GameOver = {
 
 
         game.world.bringToTop(shareIcons);
-
-
-        game.input.onTap.add(function () {
-            game.state.start('Game');
-        }, this);
 
     }
 

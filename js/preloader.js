@@ -61,7 +61,12 @@ var Preloader = {
         game.load.image('snowflake','img/background/snowflake.png');
 
 
-        game.load.image('instructions','img/instructions_desktop.png');
+        if(_isMobile()){
+            game.load.image('instructions','img/instructions_mobile.png');
+        }else{
+            game.load.image('instructions','img/instructions_desktop.png');
+        }
+
         game.load.image('tubIntro','img/tubs-intro.png');
         game.load.image('rtelogo','img/rte_logo.png');
         game.load.image('gameLogo','img/game_logo.png');
@@ -70,9 +75,9 @@ var Preloader = {
 
         game.load.image('playBtn', 'img/icons/play_btn.png');
         game.load.image('playAgain', 'img/play-again-button.png');
-        game.load.image('arrowDwn', 'img/icons/arrowDown.png');
-        game.load.image('arrowUp', 'img/icons/arrowUp.png');
-        game.load.image('buttonA', 'img/icons/buttonA.png');
+        game.load.image('arrowDwn', 'img/icons/up_down_btn.png');
+        game.load.image('arrowUp', 'img/icons/up_down_btn.png');
+        game.load.image('buttonA', 'img/icons/drop_btn.png');
         game.load.image('buttonReturn', 'img/icons/return.png');
         game.load.image('replay', 'img/icons/return.png');
 
@@ -89,16 +94,17 @@ var Preloader = {
         game.load.image('link', 'img/share_link.png');
         game.load.image('whatsapp', 'img/share_whatsapp.png');
         //Audio Files
-        game.load.audio('music', ['audio/music.mp3']);
-        game.load.audio('hohoho', ['audio/hohoho.mp3']);
-        game.load.audio('nonono', ['audio/nonono.mp3']);
-        game.load.audio('timeAudio', ['audio/time-nearly-up.mp3']);
-        game.load.audio('encourage', ['audio/doing-great.mp3']);
-        game.load.audio('welcome', ['audio/welcome1.mp3']);
-        game.load.audio('instructionsAudio', ['audio/instructions.mp3']);
-        game.load.audio('goodHouses', ['audio/only-the-good.mp3']);
-        game.load.audio('promo', ['audio/promo.mp3']);
-        game.load.audio('welldone', ['audio/well-done.mp3']);
+        game.load.audio('music', ['audio/music.wav']);
+        game.load.audio('hohoho', ['audio/hohoho.wav']);
+        game.load.audio('nonono', ['audio/nonono.wav']);
+        game.load.audio('timeAudio', ['audio/time-nearly-up.wav']);
+        game.load.audio('encourage', ['audio/doing-great.wav']);
+        game.load.audio('welcome', ['audio/welcome1.wav']);
+        game.load.audio('instructionsAudio', ['audio/instructions.wav']);
+        game.load.audio('goodHouses', ['audio/only-the-good.wav']);
+        game.load.audio('promo', ['audio/promo.wav']);
+        game.load.audio('welldone', ['audio/well-done.wav']);
+        game.load.audio('nextTime', ['audio/next-time.wav']);
         game.load.audio('coin', ['audio/coin.wav']);
 
 

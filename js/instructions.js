@@ -16,10 +16,11 @@ var Instructions = {
         logo = game.add.sprite(15, 15, 'rtelogo');
         logo.scale.set(0.8);
 
-        Menu.music.stop();
+        if(!_isMobile()) {
+            Menu.music.stop();
+        }
 
         this.instructionsAudio = game.add.audio('instructionsAudio').play();
-
 
         instructions = game.add.sprite(game.width/2, game.height/2-100, 'instructions');
         instructions.anchor.setTo(0.5);

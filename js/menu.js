@@ -6,9 +6,7 @@
 var Menu = {
 
     preload: function () {
-
     },
-
     snow: function(){
         emitter = game.add.emitter(game.world.centerX, -100, 200);
         emitter.width = game.width;
@@ -21,40 +19,65 @@ var Menu = {
         emitter.start(false, 5000, 100);
     },
     createBackground:function(){
-        game.stage.backgroundColor = "#000000";
+        game.stage.backgroundColor = "#292d32";
         offset = 100;
-        this.mountainsBack = game.add.sprite(0, 0, 'bgr-back');
-        this.mountainsBack.width = game.width;
-        this.mountainsBack.height = game.height;
+
+
+        //Moon
+
+        this.moon = game.add.sprite(game.width/2, game.height/2, 'moon');
+        this.moon.anchor.set(0.5);
+
+        //clouds
+        this.clouds = game.add.tileSprite(0,
+            game.height - game.cache.getImage('clouds').height,
+            game.width,
+            game.cache.getImage('clouds').height,
+            'clouds'
+        );
+        this.mountains = game.add.tileSprite(0,
+            game.height - game.cache.getImage('mountains').height,
+            game.width,
+            game.cache.getImage('mountains').height,
+            'mountains'
+        );
+        this.hills = game.add.tileSprite(0,
+            game.height - game.cache.getImage('hills').height,
+            game.width,
+            game.cache.getImage('hills').height,
+            'hills'
+        );
+
     },
     create: function () {
 
         this.createBackground();
         this.snow();
-        //add Splash screen heading
-        textStyle = { font: settings.splashHeadingFont , fill: '#ffffff', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
-        splashHeading = game.add.text(game.world.centerX, game.world.centerY-85, "An Xmas Game", textStyle);
-        splashHeading.scale.set(0);
-        splashHeading.anchor.set(0.5);
-        var splashHeadingTween = game.add.tween(splashHeading.scale);
-        splashHeadingTween.to({x:1,y:1}, 300, Phaser.Easing.Linear.None);
-        splashHeadingTween.onComplete.addOnce(function () {
 
-            textStyle = { font: settings.playBtnFont , fill: '#cc3333', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
-            playBtn = game.add.text(game.world.centerX, splashHeading.centerY+55, "Tap to Play", textStyle);
-            playBtn.anchor.set(0.5);
-            playBtn.alpha = 0;
-            playBtnTween = game.add.tween(playBtn).to( { alpha: 1 }, 800, Phaser.Easing.Linear.None, true, 0, 800, true);
+        welcome = game.add.audio('welcome').play();
+        this.music = game.add.audio('music');
 
-
-
+        game.time.events.add(Phaser.Timer.SECOND*2, function() {
+            this.music.play();
         }, this);
-        splashHeadingTween.start();
+
+        logo = game.add.sprite(10, 10, 'rtelogo');
+
+        gameLogo = game.add.sprite(game.width-Percent(5, w), Percent(4, h), 'gameLogo');
+        gameLogo.anchor.setTo(1, 0);
+
+        intro = game.add.sprite(Percent(6, w), Percent(10, h), 'tubIntro');
+        intro.scale.setTo(0.8);
+        intro.anchor.setTo(0, 0);
+
+        playBtn = game.add.sprite(game.width-Percent(10,w), game.height-Percent(20, h), 'playBtn');
+        playBtn.anchor.setTo(1);
 
         //tap anywhere
         game.input.onTap.add(function () {
             game.state.start('Instructions');
         }, this);
+
 
 
     }

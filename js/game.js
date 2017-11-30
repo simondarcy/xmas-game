@@ -6,7 +6,7 @@ snakeSection = [];
 
 numSnakeSections = 5;
 
-var blah,ball,moving,direction = "up",canDrop=false;
+var blah,ball,dropGift,moving,direction = "up",canDrop=false;
 
 var presentsCollected;
 var giftSpeed = 280;
@@ -18,11 +18,11 @@ var timeLeft = 60;
 
 //GIFT
 Gift = function (game) {
-    var position = game.rnd.between(10, game.height/2);
+    var position = game.rnd.between(10, game.height/1.7);
     Phaser.Sprite.call(this, game, game.width+100, position, "gift");
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.anchor.set(0.5);
-    this.scale.setTo(settings.giftScale);
+    //this.scale.setTo(settings.giftScale);
     this.angle += game.rnd.between(45, 360);
     this.body.velocity.x = -giftSpeed;
     this.body.angularVelocity = -30;
@@ -42,44 +42,23 @@ Gift.prototype.update = function(){
 };
 
 
-//Functions to drop the Gift
-DropGift = function (game) {
-    Phaser.Sprite.call(this, game, snakeSection[0].x, snakeSection[0].y, "gift");
-    game.physics.enable(this, Phaser.Physics.ARCADE);
-    this.anchor.set(0.5);
-    this.scale.setTo(settings.giftScale);
-    this.angle += game.rnd.between(45, 360);
-    this.body.velocity.y = +giftSpeed;
-    this.body.angularVelocity = -200;
-};
-DropGift.prototype = Object.create(Phaser.Sprite.prototype);
-DropGift.prototype.constructor = DropGift;
-DropGift.prototype.update = function(){
-
-    if(this.placeGift && this.x < game.width - giftGap){
-        this.placeGift = false;
-        Game.addGift(this.parent);
-    }
-    //detroy once left screen
-    if(this.y > game.height){
-        this.destroy();
-    }
-};
 
 
 //Create Houses
 House = function (game) {
-    Phaser.Sprite.call(this, game, game.width+150, (game.height-game.cache.getImage('house').height+50), "house");
+    houseType = game.rnd.between(0, 1);
+    houseSprite = (houseType==0)?'houseNaughty':'houseNice';
+    Phaser.Sprite.call(this, game, game.width+150, (game.height-game.cache.getImage(houseSprite).height+95), houseSprite);
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.anchor.set(0.5);
     this.scale.setTo(settings.houseScale);
     this.body.velocity.x = -giftSpeed;
     this.body.immovable = true;
     this.placeHouse = true;
-    this.houseType = game.rnd.between(0, 1);
-    var anim = this.animations.add('gb');
-    anim.frame = this.houseType;
-    this.gap =  game.rnd.between(150, 300)
+    this.houseType = houseType;
+    var anim = this.animations.add('anim');
+    this.animations.play('anim', 2, true);
+    this.gap =  game.rnd.between(150, 200)
 
 };
 House.prototype = Object.create(Phaser.Sprite.prototype);
@@ -104,6 +83,8 @@ var Game = {
 
     create : function() {
 
+        Instructions.instructionsAudio.stop();
+
         this.createBackground();
         Menu.snow();
 
@@ -115,10 +96,17 @@ var Game = {
         this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
-        music = game.add.audio('music');
-        music.play();
-
         hohoho = game.add.audio('hohoho');
+        nonono = game.add.audio('nonono');
+        encourage = game.add.audio('encourage');
+        timeAudio = game.add.audio('timeAudio');
+        coin = game.add.audio('coin');
+        goodAudio = game.add.audio('goodHouses').play();
+
+        music = game.add.audio('music');
+        game.time.events.add(Phaser.Timer.SECOND*4, function() {
+            music.loopFull(0.5);
+        }, this);
 
         this.giftGroup = game.add.group();
         this.addGift(this.giftGroup);
@@ -144,13 +132,26 @@ var Game = {
                 an = 0.6
             }
             snakeSection[i] = game.add.sprite(300+i*settings.reindeerSpacing, 300, sp);
+
+            var fly = snakeSection[i].animations.add('fly');
+            snakeSection[i].animations.play('fly', 2, true);
+
             game.physics.enable(snakeSection[i], Phaser.Physics.ARCADE);
             snakeSection[i].body.collideWorldBounds = true;
             snakeSection[i].anchor.setTo(0.5, an);
             snakeSection[i].scale.setTo(sc);
             if (sp=="santa"){
                 snakeSection[i].width = 130;
-                snakeSection[i].height = 100
+                snakeSection[i].height = 100;
+                //add tubs
+                tubs = game.add.sprite(300+i*settings.reindeerSpacing-25, 280, 'tubs');
+                game.physics.enable(tubs, Phaser.Physics.ARCADE);
+                var tubAnim = tubs.animations.add('tubAnim', [0,1]);
+                tubs.scale.setTo(0.7);
+                tubs.anchor.setTo(1);
+                tubs.body.immovable = true;
+                this.santaGroup.add(tubs);
+
             }
             this.santaGroup.add(snakeSection[i]);
         }
@@ -159,10 +160,9 @@ var Game = {
         ball = snakeSection[snakeSection.length-1];
         ball.body.immovable = true;
 
-        this.dropGiftGroup = game.add.group();
 
         textStyle = {
-            font: '42px Arial',
+            font: '30px Arial',
             fill: '#ffffff',
             align: 'center',
             boundsAlignH: "center",
@@ -172,27 +172,36 @@ var Game = {
         presentsText = game.add.text(game.width - 100, 50, presentsCollected, textStyle);
         presentsText.alpha = 0;
         presentsText.setText(presentsCollected);
+
+
+        scoreBgr = game.add.sprite(game.width - 100, 10, 'score');
+        scoreBgr.anchor.setTo(0.5, 0);
+
+        timerBgr = game.add.sprite(game.width - 250, 10, 'timer');
+        timerBgr.anchor.setTo(0.5, 0);
+
+
         //Actual score box
-        scoreText = game.add.text(game.width - 100, 50, score, textStyle);
+        scoreText = game.add.text(scoreBgr.x, 73, score, textStyle);
+        scoreText.anchor.setTo(0.5);
         scoreText.setText(score);
-
-        game.input.onDown.add(this.moveDeer, this);
-
-
-
 
 
         //add time test
         timertextStyle = {
-            font: '',
+            font: '30px Arial',
             fill: '#FFFFFF',
             align: 'center',
             boundsAlignH: "center",
             boundsAlignV: "middle"
         };
 
-        timeText = game.add.text(20, 25, timeLeft, timertextStyle);
+        timeText = game.add.text(timerBgr.x, 73, timeLeft, timertextStyle);
         game.time.events.loop(Phaser.Timer.SECOND, this.decreaseTime, this);
+        timeText.anchor.setTo(0.5);
+
+
+        game.input.onDown.add(this.moveDeer, this);
 
     },
 
@@ -231,24 +240,26 @@ var Game = {
         game.add.existing(gift);
         group.add(gift);
     },
-    dropGift:function(group){
-        var prez = new DropGift(game);
-        game.add.existing(prez);
-        group.add(prez);
-    },
+
 
     moveDeer: function(location){
 
         for (var i = snakeSection.length-1; i >= 0; i--) {
             game.physics.arcade.moveToXY(snakeSection[i], snakeSection[i].x, location, 600, 500-(i*50));
         }
+        game.physics.arcade.moveToXY(tubs, tubs.x, location, 600, 500-(50));
 
     },
     checkDeer:function(){
         for (var i = 0; i <= numSnakeSections-1; i++) {
-            if(direction == "down" && (snakeSection[i].y + snakeSection[i].height) >= blah || direction == "up" && snakeSection[i].y <= blah) {
+            if(direction == "down" && (snakeSection[i].y + snakeSection[i].height-10) >= blah || direction == "up" && snakeSection[i].y <= blah) {
                 snakeSection[i].body.velocity.setTo(0, 0);
             }
+
+            if(direction == "down" && (tubs.y + tubs.height) >= blah || direction == "up" && tubs.y <= blah) {
+                tubs.body.velocity.setTo(0, 0);
+            }
+
         }
     },
     update : function() {
@@ -258,28 +269,41 @@ var Game = {
             b.body.velocity.x = 0;
             b.kill();
             b.destroy();
+            coin.play();
             //update number of presents collected
             presentsCollected++;
-            presentsText.setText(presentsCollected);
-            presentsText.alpha = 1;
-            presentsText.x = (s.x);
-            presentsText.y = (s.y - 100);
-            presentsTextTween = game.add.tween(presentsText).to({alpha: 0}, 300, Phaser.Easing.Linear.None, true);
+            if(presentsCollected == 1){
+                canDrop = true;
+                tubs.frame = 1;
+            }
+            else if(presentsCollected==0){
+                tubs.frame = 0;
+            }
         });
 
 
         //Present collides with house
-        game.physics.arcade.collide(this.houseGroup, this.dropGiftGroup, function(h, g){
+        game.physics.arcade.collide(this.houseGroup, dropGift, function(h, g){
 
-            //!todo is this a good house?
 
             if (h.houseType == 0){
-                score--
+                score--;
+                nonono.play();
             }
             else{
                 score++;
-                hohoho.play();
+                if (score % 5){
+                    game.time.events.add(Phaser.Timer.SECOND*2, function() {
+                        encourage.play();
+                    });
+                }
+                else {
+                    hohoho.play();
+                }
             }
+
+
+
             scoreText.setText(score);
 
             var killTween = game.add.tween(g.scale);
@@ -294,12 +318,16 @@ var Game = {
 
 
 
+        if(typeof(dropGift)!='undefined' && dropGift.y>game.height){
+            canDrop = true;
+        }
 
-        //If sanya hots house
-        game.physics.arcade.collide(this.santaGroup, this.houseGroup, function(s, h){
-            music.stop();
-            game.state.start('GameOver');
-        });
+
+
+        if(ball.y + ball.height > game.height-10) {
+                music.stop();
+                game.state.start('GameOver');
+        }
 
         this.backgroundMotion();
 
@@ -320,7 +348,7 @@ var Game = {
             this.dropPresent();
         }
         else if (this.spaceKey.isUp){
-            canDrop = true;
+
         }
 
         this.checkDeer();
@@ -328,36 +356,39 @@ var Game = {
 
     },
     dropPresent:function(){
-        if(canDrop) {
-            if (presentsCollected<=0)return false;
+        if(canDrop && presentsCollected>0) {
+
+            dropGift = game.add.sprite(tubs.x-15, tubs.y-10, 'gift');
+            game.physics.enable(dropGift, Phaser.Physics.ARCADE);
+            dropGift.scale.setTo(settings.giftScale);
+            dropGift.angle += game.rnd.between(45, 360);
+            dropGift.body.velocity.y = +giftSpeed;
+            dropGift.body.angularVelocity = -200;
             canDrop = false;
-            this.dropGift(this.dropGiftGroup);
-            presentsCollected--;
-            presentsText.setText(presentsCollected);
+            tubs.animations.play('tubAnim', 2, false);
         }
     },
     decreaseTime: function(){
         timeLeft --;
         timeText.text = timeLeft;
         if(timeLeft == 0){
+            music.stop();
             game.state.start('GameOver');
+        }
+        else if(timeLeft == 10){
+            timeAudio.play();
         }
     },
     createBackground:function(){
 
         Menu.createBackground();
-        this.mountainsMid2 = game.add.tileSprite(0,
-            game.height - game.cache.getImage('bgr-front').height+10,
-            game.width,
-            game.cache.getImage('bgr-front').height,
-            'bgr-front'
-        );
-
 
     },
 
     backgroundMotion:function(){
-        this.mountainsMid2.tilePosition.x -= 0.75;
+        Menu.mountains.tilePosition.x -= 0.75;
+        Menu.hills.tilePosition.x -= 0.75;
+        Menu.clouds.tilePosition.x -= 0.75;
     },
 
     render: function(){

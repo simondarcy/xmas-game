@@ -9,37 +9,19 @@ var Instructions = {
     },
     create: function(){
 
+        logo = game.add.sprite(10, 10, 'rtelogo');
+
         Menu.createBackground();
+        Menu.music.stop();
 
-        textStyle = { font: settings.splashHeadingFont , fill: '#ffffff', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
-        instructionHeadin = game.add.text(game.world.centerX, game.height/10, "How to Play", textStyle);
-        instructionHeadin.anchor.set(0.5);
-
-
-        textStyle = { font: settings.instructionDescFont , fill: '#ffffff', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
-        instructionHeadin = game.add.text(game.world.centerX, instructionHeadin.y+80, settings.instructions, textStyle);
-        instructionHeadin.anchor.set(0.5);
+        this.instructionsAudio = game.add.audio('instructionsAudio').play();
 
 
-        textStyle = { font: settings.instructionDescFont , fill: '#ffffff', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
-        instructionHeadin = game.add.text(game.world.centerX, instructionHeadin.y+80, "Collect presents while avoiding the planes and houses", textStyle);
-        instructionHeadin.anchor.set(0.5);
+        instructions = game.add.sprite(game.width/2, game.height/2-100, 'instructions');
+        instructions.anchor.setTo(0.5);
 
-
-        textStyle = { font: settings.instructionDescFont , fill: '#ffffff', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
-        instructionHeadin = game.add.text(game.world.centerX, instructionHeadin.y+80, "Make sure to only drop presents into the good houses", textStyle);
-        instructionHeadin.anchor.set(0.5);
-
-
-        textStyle = { font: settings.playBtnFont , fill: '#cc3333', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
-        playBtn = game.add.text(game.world.centerX, instructionHeadin.y+80, "Tap to Play", textStyle);
-        playBtn.anchor.set(0.5);
-        playBtn.alpha = 0;
-        playBtnTween = game.add.tween(playBtn).to( { alpha: 1 }, 800, Phaser.Easing.Linear.None, true, 0, 800, true);
-
-
-
-
+        playBtn = game.add.sprite(game.width/2, instructions.y+instructions.height-20, 'playBtn');
+        playBtn.anchor.setTo(0.5);
 
         //tap anywhere
         game.input.onTap.add(function () {

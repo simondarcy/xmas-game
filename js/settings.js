@@ -1,6 +1,6 @@
 var mobileSettings = {
     planeScale:0.25,
-    reindeerScale:0.2,
+    reindeerScale:1,
     reindeerSpacing:60,
     santaScale:0.4,
     houseScale:1,
@@ -16,7 +16,7 @@ var mobileSettings = {
 
 var desktopSettings = {
     planeScale:0.3,
-    reindeerScale:0.2,
+    reindeerScale:0.7,
     reindeerSpacing:60,
     santaScale:0.4,
     houseScale:1,

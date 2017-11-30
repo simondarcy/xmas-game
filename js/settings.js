@@ -10,7 +10,7 @@ var mobileSettings = {
     instructionDescFont:'23px Arial',
     shareHeadingTop: 170,
     scoreTextFont:'60px Mountains of Christmas',
-    finalScoreTextFont:'35px Mountains of Christmas',
+    finalScoreTextFont:'35px Arial',
     "instructions":"Use the arrow buttons to move up & down. To drop presents, tap A"
 };
 
@@ -26,7 +26,7 @@ var desktopSettings = {
     instructionDescFont:'23px Arial',
     shareHeadingTop: 170,
     scoreTextFont:'60px Mountains of Christmas',
-    finalScoreTextFont:'35px Mountains of Christmas',
+    finalScoreTextFont:'35px Arial',
     "instructions":"Use the up/down arrows to move and press Space to drop presents"
 };
 

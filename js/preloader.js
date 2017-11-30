@@ -53,6 +53,7 @@ var Preloader = {
         //Background parallax
         game.load.image('moon', 'img/background/moon.png');
         game.load.image('clouds', 'img/background/clouds.png');
+        game.load.image('static', 'img/background/static-bgr.png');
         game.load.image('mountains', 'img/background/mountains.png');
         game.load.image('hills', 'img/background/hills.png');
 
@@ -68,6 +69,7 @@ var Preloader = {
         //Buttons
 
         game.load.image('playBtn', 'img/icons/play_btn.png');
+        game.load.image('playAgain', 'img/play-again-button.png');
         game.load.image('arrowDwn', 'img/icons/arrowDown.png');
         game.load.image('arrowUp', 'img/icons/arrowUp.png');
         game.load.image('buttonA', 'img/icons/buttonA.png');

@@ -86,7 +86,7 @@ var Game = {
         Instructions.instructionsAudio.stop();
 
         this.createBackground();
-        Menu.snow();
+        this.snow();
 
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -113,6 +113,8 @@ var Game = {
 
         this.houseGroup = game.add.group();
         this.addHouse(this.houseGroup);
+
+        this.dropGiftGroup = game.add.group();
 
         if (_isMobile()){
             this.mobileButtons();
@@ -147,8 +149,14 @@ var Game = {
                 tubs = game.add.sprite(300+i*settings.reindeerSpacing-25, 280, 'tubs');
                 game.physics.enable(tubs, Phaser.Physics.ARCADE);
                 var tubAnim = tubs.animations.add('tubAnim', [0,1]);
+                tubAnim.onComplete.add(function(){
+                   if(presentsCollected==0){
+                       tubs.frame = 0;
+                   }
+                });
                 tubs.scale.setTo(0.7);
                 tubs.anchor.setTo(1);
+                tubs.body.collideWorldBounds = true;
                 tubs.body.immovable = true;
                 this.santaGroup.add(tubs);
 
@@ -283,7 +291,7 @@ var Game = {
 
 
         //Present collides with house
-        game.physics.arcade.collide(this.houseGroup, dropGift, function(h, g){
+        game.physics.arcade.collide(this.dropGiftGroup, this.houseGroup,function(g, h){
 
 
             if (h.houseType == 0){
@@ -292,7 +300,7 @@ var Game = {
             }
             else{
                 score++;
-                if (score % 5){
+                if (score % 5 == 0){
                     game.time.events.add(Phaser.Timer.SECOND*2, function() {
                         encourage.play();
                     });
@@ -303,6 +311,7 @@ var Game = {
             }
 
 
+            canDrop = true;
 
             scoreText.setText(score);
 
@@ -362,8 +371,12 @@ var Game = {
             dropGift.angle += game.rnd.between(45, 360);
             dropGift.body.velocity.y = +giftSpeed;
             dropGift.body.angularVelocity = -200;
+            this.dropGiftGroup.add(dropGift);
             canDrop = false;
+            presentsCollected--;
+
             tubs.animations.play('tubAnim', 2, false);
+
         }
     },
     decreaseTime: function(){
@@ -377,16 +390,52 @@ var Game = {
             timeAudio.play();
         }
     },
-    createBackground:function(){
-
-        Menu.createBackground();
-
-    },
-
     backgroundMotion:function(){
-        Menu.mountains.tilePosition.x -= 0.75;
-        Menu.hills.tilePosition.x -= 0.75;
-        Menu.clouds.tilePosition.x -= 0.75;
+        this.mountains.tilePosition.x -= 0.75;
+        this.hills.tilePosition.x -= 0.75;
+        this.clouds.tilePosition.x -= 0.75;
+    },
+    snow: function(){
+        emitter = game.add.emitter(game.world.centerX, -100, 200);
+        emitter.width = game.width;
+        emitter.makeParticles('snow');
+        emitter.minParticleSpeed.set(0, 300);
+        emitter.maxParticleSpeed.set(0, 400);
+        emitter.setRotation(0, 0);
+        emitter.setAlpha(0.3, 0.8);
+        emitter.setScale(0.5, 0.5, 1, 1);
+        emitter.start(false, 5000, 100);
+    },
+    createBackground: function(){
+        game.stage.backgroundColor = "#292d32";
+        offset = 100;
+
+
+        //Moon
+
+        this.moon = game.add.sprite(game.width/2, game.height/2, 'moon');
+        this.moon.anchor.set(0.5);
+
+        //clouds
+        this.clouds = game.add.tileSprite(0,
+            game.height - game.cache.getImage('clouds').height,
+            game.width,
+            game.cache.getImage('clouds').height,
+            'clouds'
+        );
+        this.mountains = game.add.tileSprite(0,
+            game.height - game.cache.getImage('mountains').height,
+            game.width,
+            game.cache.getImage('mountains').height,
+            'mountains'
+        );
+        this.hills = game.add.tileSprite(0,
+            game.height - game.cache.getImage('hills').height,
+            game.width,
+            game.cache.getImage('hills').height,
+            'hills'
+        );
+
     },
 
     render: function(){

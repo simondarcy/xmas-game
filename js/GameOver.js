@@ -10,13 +10,26 @@ var GameOver = {
 
         clouds = game.add.sprite(0, 0, 'clouds');
 
-        logo = game.add.sprite(10, 10, 'rtelogo');
+        logo = game.add.sprite(15, 15, 'rtelogo');
+        logo.scale.set(0.8);
+
 
         gameLogo = game.add.sprite(game.width-Percent(5, w), Percent(4, h), 'gameLogo');
         gameLogo.anchor.setTo(1, 0);
 
         presents = game.add.sprite(0, game.height - game.cache.getImage('presents').height, 'presents');
         presents.width = game.width;
+
+        textStyle = {
+            font: settings.finalScoreTextFont, fill: '#FFFFFF', align:'center', boundsAlignH: "center",  boundsAlignV: "middle"
+        };
+
+        scoreBgr = game.add.sprite(game.width-Percent(20, 'w'), (gameLogo.y+gameLogo.height)+30, 'score');
+        scoreBgr.anchor.setTo(0.5, 0);
+
+        scoreText = game.add.text( game.width-Percent(20, 'w'), scoreBgr.y+(scoreBgr.height/2), score, textStyle);
+        scoreText.anchor.set(0.5, 0);
+
 
 
         tubs = game.add.sprite(game.width/3.4, game.height-game.cache.getImage('endTubs').height+Percent(20, 'h'), 'endTubs');
@@ -36,26 +49,19 @@ var GameOver = {
 
         promo = game.add.audio('promo').play();
 
-        textStyle = {
-            font: settings.finalScoreTextFont, fill: '#FFFFFF', align:'center', boundsAlignH: "center",  boundsAlignV: "middle"
-        };
-
-        textStyle['fill'] = "#FF0000";
-        scoreText = game.add.text( 100, 300, score, textStyle);
-        scoreText.anchor.set(0.5);
 
         //Add tap to replay
-        instructionHeadingTextStyle = { font: settings.instructionFont , fill: '#ffe600', align:'center', boundsAlignH: "center", boundsAlignV: "middle" };
-        instructionHeading = game.add.text((game.width/2), game.world.centerY+100, "Tap to Play Again", instructionHeadingTextStyle);
-        instructionHeading.anchor.set(0.5);
-        instructionHeading.alpha = 0;
-        instructionHeadingTween = game.add.tween(instructionHeading).to( { alpha: 1 }, 800, Phaser.Easing.Linear.None, true, 0, 800, true);
 
+        instructionHeading = game.add.sprite(game.width-Percent(20, 'w'), (scoreBgr.y+scoreBgr.height)+50,'playAgain');
+        instructionHeading.anchor.set(0.5, 0);
         instructionHeading.inputEnabled = true;
         instructionHeading.events.onInputDown.add(function(){
             promo.stop();
             game.state.start('Game');
         }, this);
+
+
+
 
 
 

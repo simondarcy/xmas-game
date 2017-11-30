@@ -9,9 +9,13 @@ var Instructions = {
     },
     create: function(){
 
-        logo = game.add.sprite(10, 10, 'rtelogo');
+        bgr = game.add.sprite(0, 0, 'static');
+        bgr.width = game.width;
+        bgr.height = game.height;
 
-        Menu.createBackground();
+        logo = game.add.sprite(15, 15, 'rtelogo');
+        logo.scale.set(0.8);
+
         Menu.music.stop();
 
         this.instructionsAudio = game.add.audio('instructionsAudio').play();

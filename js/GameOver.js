@@ -14,13 +14,12 @@ var GameOver = {
         logo.scale.set(0.8);
 
 
-
-
         presents = game.add.sprite(0, game.height - game.cache.getImage('presents').height, 'presents');
         presents.width = game.width;
 
         gameLogo = game.add.sprite(game.width-Percent(5, w), Percent(4, h), 'gameLogo');
         gameLogo.anchor.setTo(1, 0);
+        gameLogo.scale.set(settings.logoScale);
 
         textStyle = {
             font: settings.finalScoreTextFont, fill: '#FFFFFF', align:'center', boundsAlignH: "center",  boundsAlignV: "middle"
@@ -31,8 +30,6 @@ var GameOver = {
 
         scoreText = game.add.text( game.width-Percent(20, 'w'), scoreBgr.y+(scoreBgr.height/2), score, textStyle);
         scoreText.anchor.set(0.5, 0);
-
-
 
         tubs = game.add.sprite(game.width/3.4, game.height-game.cache.getImage('endTubs').height+Percent(settings.endTubsPc, 'h'), 'endTubs');
         tubs.anchor.setTo(0.5, 0);
@@ -70,6 +67,7 @@ var GameOver = {
         instructionHeading = game.add.sprite(game.width-Percent(20, 'w'), (scoreBgr.y+scoreBgr.height)+50,'playAgain');
         instructionHeading.anchor.set(0.5, 0);
         instructionHeading.inputEnabled = true;
+        instructionHeading.scale.set(settings.btnScale);
         instructionHeading.events.onInputDown.add(function(){
             promo.stop();
             game.state.start('Game');
@@ -85,19 +83,22 @@ var GameOver = {
 
         shareIconsX = game.width-Percent(20, 'w');
 
-        var facebook = game.add.button(shareIconsX - 100, game.height-settings.shareY, 'facebook');
+        var facebook = game.add.button(shareIconsX - settings.shareSpacing, game.height-settings.shareY, 'facebook');
         facebook.anchor.setTo(0.5);
+        facebook.scale.set(settings.shareScale);
 
         var twitter = game.add.button(shareIconsX, game.height-settings.shareY, 'twitter');
         twitter.anchor.setTo(0.5);
+        twitter.scale.set(settings.shareScale);
         var link;
         if(_isMobile()) {
-            link = game.add.button(shareIconsX + 100, game.height - settings.shareY, 'whatsapp');
+            link = game.add.button(shareIconsX + settings.shareSpacing, game.height - settings.shareY, 'whatsapp');
         }
         else{
-            link = game.add.button(shareIconsX + 100, game.height - settings.shareY, 'link');
+            link = game.add.button(shareIconsX + settings.shareSpacing, game.height - settings.shareY, 'link');
         }
-        link.anchor.setTo(0.5);
+        link.anchor.setTo(0.6);
+        link.scale.set(settings.shareScale);
 
         facebook.onInputUp.add(function(){
             url = "//www.facebook.com/sharer/sharer.php?u=https://www.rte.ie/long-shots/";

@@ -21,7 +21,7 @@ Gift = function (game) {
     Phaser.Sprite.call(this, game, game.width+100, position, "gift");
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.anchor.set(0.5);
-    //this.scale.setTo(settings.giftScale);
+    this.scale.setTo(settings.giftScale);
     this.angle += game.rnd.between(45, 360);
     this.body.velocity.x = -giftSpeed;
     this.body.angularVelocity = -30;
@@ -55,9 +55,9 @@ House = function (game) {
     this.body.immovable = true;
     this.placeHouse = true;
     this.houseType = houseType;
-    var anim = this.animations.add('anim');
+    var anim = this.animations.add('anim', [0,1]);
     this.animations.play('anim', 2, true);
-    this.gap = game.rnd.between(150, 200)
+    this.gap = game.rnd.between(settings.houseGapMin, settings.houseGapMax)
 
 };
 House.prototype = Object.create(Phaser.Sprite.prototype);
@@ -133,7 +133,7 @@ var Game = {
                 sc = settings.santaScale;
                 an = 0.6
             }
-            snakeSection[i] = game.add.sprite(300+i*settings.reindeerSpacing, 300, sp);
+            snakeSection[i] = game.add.sprite(300+i*settings.reindeerSpacing, game.height/2, sp);
 
             var fly = snakeSection[i].animations.add('fly');
             snakeSection[i].animations.play('fly', 2, true);
@@ -143,10 +143,8 @@ var Game = {
             snakeSection[i].anchor.setTo(0.5, an);
             snakeSection[i].scale.setTo(sc);
             if (sp=="santa"){
-                snakeSection[i].width = 130;
-                snakeSection[i].height = 100;
                 //add tubs
-                tubs = game.add.sprite(300+i*settings.reindeerSpacing-25, 280, 'tubs');
+                tubs = game.add.sprite(300+i*settings.reindeerSpacing-settings.tubsOffset, game.height/2, 'tubs');
                 game.physics.enable(tubs, Phaser.Physics.ARCADE);
                 var tubAnim = tubs.animations.add('tubAnim', [0,1]);
                 tubAnim.onComplete.add(function(){
@@ -154,7 +152,7 @@ var Game = {
                        tubs.frame = 0;
                    }
                 });
-                tubs.scale.setTo(0.7);
+                tubs.scale.setTo(settings.tubsScale);
                 tubs.anchor.setTo(1);
                 tubs.body.collideWorldBounds = true;
                 tubs.body.immovable = true;
@@ -170,41 +168,31 @@ var Game = {
 
 
         textStyle = {
-            font: '30px Arial',
+            font: settings.uiFont,
             fill: '#ffffff',
             align: 'center',
             boundsAlignH: "center",
             boundsAlignV: "middle"
         };
 
-        presentsText = game.add.text(game.width - 100, 50, presentsCollected, textStyle);
-        presentsText.alpha = 0;
-        presentsText.setText(presentsCollected);
 
 
-        scoreBgr = game.add.sprite(game.width - 100, 10, 'score');
+        scoreBgr = game.add.sprite(game.width - settings.scoreOffset, 10, 'score');
         scoreBgr.anchor.setTo(0.5, 0);
+        scoreBgr.scale.setTo(settings.uiScale);
 
-        timerBgr = game.add.sprite(game.width - 250, 10, 'timer');
+        timerBgr = game.add.sprite(game.width - settings.timerOffset, 10, 'timer');
         timerBgr.anchor.setTo(0.5, 0);
+        timerBgr.scale.setTo(settings.uiScale);
 
 
         //Actual score box
-        scoreText = game.add.text(scoreBgr.x, 73, score, textStyle);
+        scoreText = game.add.text(scoreBgr.x, settings.uiFontPosition, score, textStyle);
         scoreText.anchor.setTo(0.5);
         scoreText.setText(score);
 
 
-        //add time test
-        timertextStyle = {
-            font: '30px Arial',
-            fill: '#FFFFFF',
-            align: 'center',
-            boundsAlignH: "center",
-            boundsAlignV: "middle"
-        };
-
-        timeText = game.add.text(timerBgr.x, 73, timeLeft, timertextStyle);
+        timeText = game.add.text(timerBgr.x,  settings.uiFontPosition, timeLeft, textStyle);
         game.time.events.loop(Phaser.Timer.SECOND, this.decreaseTime, this);
         timeText.anchor.setTo(0.5);
 
@@ -215,14 +203,16 @@ var Game = {
 
 
     mobileButtons:function(){
-        var spaceArrow = game.add.button(100, game.world.centerY-30, 'buttonA');
+        var spaceArrow = game.add.button(70, game.world.centerY/2, 'buttonA');
         spaceArrow.anchor.setTo(0.5);
+        spaceArrow.scale.setTo(0.7);
         spaceArrow.onInputUp.add(function(){
             this.dropPresent();
         }, this);
 
-        var upArrow = game.add.button(100, spaceArrow.y - 80, 'arrowUp');
+        var upArrow = game.add.button(70, spaceArrow.y - 55, 'arrowUp');
         upArrow.anchor.setTo(0.5);
+        upArrow.scale.setTo(0.7);
 
         upArrow.onInputDown.add(function(){
             blah = (ball.y - ball.height);
@@ -230,8 +220,9 @@ var Game = {
             this.moveDeer(blah);
         }, this);
 
-        var downArrow = game.add.button(100, (spaceArrow.y+spaceArrow.height)+18, 'arrowDwn');
+        var downArrow = game.add.button(70, (spaceArrow.y+spaceArrow.height)+12, 'arrowDwn');
         downArrow.anchor.setTo(0.5);
+        downArrow.scale.setTo(0.7);
         downArrow.angle += 180;
         downArrow.onInputDown.add(function(){
             blah = (ball.y + ball.height) + ball.height;
@@ -274,6 +265,10 @@ var Game = {
     update : function() {
         //Santa collects presents
         game.physics.arcade.collide(this.santaGroup, this.giftGroup, function(s, b){
+
+            ball.body.immovable = true;
+
+
             //kill presetn
             b.body.velocity.x = 0;
             b.kill();
@@ -285,9 +280,14 @@ var Game = {
                 canDrop = true;
                 tubs.frame = 1;
             }
-            else if(presentsCollected==0){
-                tubs.frame = 0;
+
+
+
+            if(Game.giftGroup.length<=0) {
+                Game.addGift(Game.giftGroup);
             }
+
+
         });
 
 
@@ -310,7 +310,8 @@ var Game = {
                     hohoho.play();
                 }
             }
-
+            h.animations.stop();
+            h.frame = 2;
 
             canDrop = true;
 
@@ -324,13 +325,9 @@ var Game = {
             killTween.start();
         });
 
-
-
         if(typeof(dropGift)!='undefined' && dropGift.y>game.height){
             canDrop = true;
         }
-
-
 
         if(ball.y + ball.height > game.height-10) {
             music.stop();

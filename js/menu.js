@@ -22,17 +22,20 @@ var Menu = {
         }
 
         logo = game.add.sprite(15, 15, 'rtelogo');
-        logo.scale.set(0.8);
+        logo.scale.set(settings.logoScale);
 
         gameLogo = game.add.sprite(game.width-Percent(5, w), Percent(4, h), 'gameLogo');
+        gameLogo.scale.setTo(settings.gameLogoScale);
         gameLogo.anchor.setTo(1, 0);
 
         intro = game.add.sprite(Percent(6, w), Percent(10, h), 'tubIntro');
         intro.scale.setTo(settings.introTubsScale);
         intro.anchor.setTo(0, 0);
+        intro.scale.setTo(settings.introTubsScale);
 
         playBtn = game.add.sprite(game.width-Percent(10,w), game.height-Percent(20, h), 'playBtn');
         playBtn.anchor.setTo(1);
+        playBtn.scale.setTo(settings.btnScale);
 
         //tap anywhere
         game.input.onTap.add(function () {

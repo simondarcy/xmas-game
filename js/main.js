@@ -18,12 +18,23 @@ function _isMobile(){
     return isMobile;
 }
 
+function isFacebookApp() {
+    var ua = navigator.userAgent || navigator.vendor || window.opera;
+    return (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1);
+}
+
 
 function init() {
 
 
     var w = Math.max (document.documentElement.clientWidth, window.innerWidth || 0);
     var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+
+    if (isFacebookApp()){
+        h = h - 100;
+        alert(h);
+    }
 
     if (w > 1160){
         //Switch to desktop settings
@@ -44,6 +55,7 @@ function init() {
     game.state.add('Game', Game);
     game.state.add('GameOver', GameOver);
     game.state.start('Preloader');
+
 }
 
 

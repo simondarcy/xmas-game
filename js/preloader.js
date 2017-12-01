@@ -46,8 +46,8 @@ var Preloader = {
         game.load.spritesheet('reindeer', 'img/ryandeer_sprite.png', 111, 144, 2);
         game.load.spritesheet('tubs', 'img/tubs-sprite.png', 112, 130, 2);
         game.load.image("gift", "img/present.png");
-        game.load.spritesheet('houseNice', 'img/house_nice_sprite.png', 184, 184, 2);
-        game.load.spritesheet('houseNaughty', 'img/house_naughty_sprite.png', 180, 184, 2);
+        game.load.spritesheet('houseNice', 'img/house_nice_sprite.png', 184, 184, 3);
+        game.load.spritesheet('houseNaughty', 'img/house_naughty_sprite.png', 180, 184, 3);
         game.load.spritesheet('endTubs', 'img/end-tubs.png', 664, 647, 2);
 
         //Background parallax

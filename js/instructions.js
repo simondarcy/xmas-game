@@ -14,7 +14,7 @@ var Instructions = {
         bgr.height = game.height;
 
         logo = game.add.sprite(15, 15, 'rtelogo');
-        logo.scale.set(0.8);
+        logo.scale.set(settings.logoScale);
 
         if(!_isMobile()) {
             Menu.music.stop();
@@ -22,11 +22,14 @@ var Instructions = {
 
         this.instructionsAudio = game.add.audio('instructionsAudio').play();
 
-        instructions = game.add.sprite(game.width/2, game.height/2-100, 'instructions');
+        instructions = game.add.sprite(game.width/2, game.height/2-settings.instructionOffset, 'instructions');
         instructions.anchor.setTo(0.5);
+        instructions.scale.setTo(settings.instructionsScale);
+
 
         playBtn = game.add.sprite(game.width/2, instructions.y+instructions.height-20, 'playBtn');
         playBtn.anchor.setTo(0.5);
+        playBtn.scale.setTo(settings.btnScale);
 
         //tap anywhere
         game.input.onTap.add(function () {

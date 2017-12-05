@@ -6,7 +6,6 @@
 
     <meta name="description" content="Play Tubridy's Toys. Help Ryan Tubridy deliver christmas gifts in time for the Late Late Toy Show">
 
-
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no">
 
@@ -21,6 +20,22 @@
     <!-- Social -->
 
     <meta property="fb:app_id" content="212765848759773" />
+    <meta property="og:title" content="Play Tubridy's Toys" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://www.rte.ie/tubridys-toys/" />
+    <meta property="og:image" content="https://img.rasset.ie/000f0b25-1200.jpg" />
+    <meta property="og:image" content="https://img.rasset.ie/000f0b25-1200.jpg" />
+    <meta property="og:site_name" content="RTE.ie" />
+    <meta property="og:description" content="Help Ryan Tubridy deliver presents in the Late Late Toy Show game!" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@rte" />
+    <meta name="twitter:title" content="Play Tubridy's Toys" />
+    <meta name="twitter:domain" content="rte.ie" />
+    <meta name="twitter:creator" content="@rte" />
+    <meta name="twitter:description" content="Help @ryantubridyshow deliver presents in our #LLTS game! @RTELateLateShow" />
+    <meta name="twitter:image:src" content="https://img.rasset.ie/000f0b25-1200.jpg"/>
+    <meta name="twitter:image" content="https://img.rasset.ie/000f0b25-1200.jpg" />
 
 
     <script type="text/javascript" src="js/phaser.min.js"></script>
@@ -35,6 +50,11 @@
             margin: 0;
             padding: 0;
             background: #000000;
+            color:#ffffff;
+        }
+        #flip{
+            width: 100%;
+            height: 100%;
         }
 
         @media only screen  and (min-width : 1150px) {
@@ -54,6 +74,8 @@
 
 </head>
 <body>
+<div id="debug"></div>
+
 
 
 <div id="game"></div>

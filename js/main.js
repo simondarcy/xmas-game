@@ -19,6 +19,7 @@ function _isMobile(){
 }
 
 function isFacebookApp() {
+
     var ua = navigator.userAgent || navigator.vendor || window.opera;
     return (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1);
 }
@@ -31,10 +32,7 @@ function init() {
     var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
 
-    if (isFacebookApp()){
-        h = h - 100;
-        alert(h);
-    }
+
 
     if (w > 1160){
         //Switch to desktop settings
@@ -44,6 +42,18 @@ function init() {
     if(w>1160){
         w = 1160;
         h = 650;
+    }
+
+
+    //str = "<p>Client: "+ document.documentElement.clientWidth + " - " + document.documentElement.clientHeight+"</p>";
+    //str = str + "<p>window: "+ window.innerWidth + " - " + window.innerHeight +"</p>";
+    //str = str + "<p>screen: "+ screen.width + " - " + screen.height +"</p>";
+    //str = str + "<p>DIV: "+ document.getElementById("debug").clientWidth + " - " + document.getElementById("debug").clientHeight +"</p>";
+    //document.getElementById('debug').innerHTML = str;
+
+    if (isFacebookApp()){
+        w=667;
+        h=287;
     }
 
 
@@ -105,5 +115,6 @@ window.onload = function()
     else{
         init();
     }
+
 
 };
